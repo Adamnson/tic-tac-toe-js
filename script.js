@@ -38,11 +38,14 @@ function GameBoard() {
 
   function markCell(row, cell, player) {
     let cell_to_fill = board[row][cell];
-    cell_to_fill.filled = true;
-    cell_to_fill.mark = player.mark;
-    cell_to_fill.player = player.id;
-    let btn = document.getElementById(`btn-${row}${cell}`);
+    if (!cell_to_fill.filled) {
+      cell_to_fill.filled = true;
+      cell_to_fill.mark = player.mark;
+      cell_to_fill.player = player.id;
+      let btn = document.getElementById(`btn-${row}${cell}`);
       btn.innerHTML = player.mark;
+      return true;
+    } else { return false}
   }
 
   function getBoard(){
@@ -114,11 +117,16 @@ function GameController() {
     { btn.addEventListener("click",  (ev) => nextMove(ev));
     });
 
-    function nextMove(ev){
-      let ids = logId(ev);
-      board.markCell(ids.row, ids.col, current_player);
-      current_player = (current_player === players[0]) ? players[1] : players[0];
-    }
+  function nextMove(ev){
+    let ids = logId(ev);
+    let valid_click = board.markCell(ids.row, ids.col, current_player);
+    if (valid_click) { switchPlayer()}
+  }
+
+  function switchPlayer() {
+    current_player = (current_player === players[0]) ? players[1] : players[0];
+  }
+
 }
 
 GameController();
