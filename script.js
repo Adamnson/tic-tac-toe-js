@@ -6,6 +6,13 @@
 *(done) we need player objects : name, mark, score
 *(done) cell object will hold state : filled/empty
 *(done) cell object will hold mark/player id 
+* make a game controller
+* 1. controller will by default assign first turn to player 1
+* 2. when player clicks on a button, controller will mark it
+* 3. controller will check if the player has won, if not
+* 4a. controller will pass the turn to other player
+* 5. repeat step 2 onwards
+* 4b. if a player has won, the controller will display congrats
 */
 
 function GameBoard() {
@@ -27,7 +34,6 @@ function GameBoard() {
       temp_row.appendChild(createAndStyleButtons(i,j).btn);
     }
     play_area.appendChild(temp_row);
-
   }
 
   function markCell(row, cell, player) {
@@ -35,6 +41,8 @@ function GameBoard() {
     cell_to_fill.filled = true;
     cell_to_fill.mark = player.mark;
     cell_to_fill.player = player.id;
+    let btn = document.getElementById(`btn-${row}${cell}`);
+      btn.innerHTML = player.mark;
   }
 
   function getBoard(){
@@ -60,10 +68,10 @@ function GameBoard() {
 function createAndStyleButtons(i,j){
   let btn = document.createElement("button");
   btn.setAttribute('id',`btn-${i}${j}`);
-  btn.addEventListener("click", (ev) => console.log(ev.target.id));
   btn.style.minHeight = "2rem";
   btn.style.padding = "1rem";
   btn.style.margin = "0.5rem";
+  btn.innerHTML = '-';
   return {btn}
 }
 
@@ -75,20 +83,42 @@ function Cell(){
   return {filled, mark, player}
 }
 
-const players = [
-  {
-    id: 1,
-    mark: 'x',
-    name: 'Player 1'
-  },
-  {
-    id: 2,
-    mark: 'o',
-    name: 'Player 2'
-  }
-]
+function GameController() {
 
-brd = GameBoard()
-brd.markCell(0,0,players[1])
-brd.markCell(1,1,players[1])
-brd.markCell(2,2,players[1])
+  const players = [
+    {
+      id: 1,
+      mark: 'x',
+      name: 'Player 1'
+    },
+    {
+      id: 2,
+      mark: 'o',
+      name: 'Player 2'
+    }
+  ]
+
+  let current_player = players[0];
+  
+  function logId(event) {
+    let btn_id = event.target.id;
+    console.log(`${btn_id} was pressed`);
+    let row = parseInt(btn_id.at(-2));
+    let col =  parseInt(btn_id.at(-1));
+    return {row,col}
+  }
+
+  board = GameBoard()
+  game_buttons = Array.from(document.querySelectorAll('button'));
+  game_buttons.forEach(btn => 
+    { btn.addEventListener("click",  (ev) => nextMove(ev));
+    });
+
+    function nextMove(ev){
+      let ids = logId(ev);
+      board.markCell(ids.row, ids.col, current_player);
+      current_player = (current_player === players[0]) ? players[1] : players[0];
+    }
+}
+
+GameController();
