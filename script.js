@@ -1,23 +1,33 @@
 /*
 * we are making a tic tac toe game
-* we need a board with 9 cells - cells will be buttons 
-* we need player objects : name, mark, score
-* there should be a board object
-*    board will have 3 rows  - each row 3 cells
-* cell object will hold state : filled/empty
-* cell object will hold mark/player id if filled   
+*(done) we need a board with 9 cells - cells will be buttons 
+*(done) there should be a board object
+*(done)    board will have 3 rows  - each row 3 cells
+*(done) we need player objects : name, mark, score
+*(done) cell object will hold state : filled/empty
+*(done) cell object will hold mark/player id 
 */
 
 function GameBoard() {
   const rows = 3;
   const columns = 3;
   const board = [];
+  let play_area = document.createElement("div");
+  document.querySelector('body').appendChild(play_area);
+  play_area.setAttribute('class', 'play-area');
+  console.log(play_area);
 
   for (let i = 0; i < rows; i++){
     board[i] = [];
+    let temp_row = document.createElement("div");
+    temp_row.setAttribute("class", `row-${i}`);
+
     for (let j = 0; j < columns; j++){
       board[i].push(Cell());
+      temp_row.appendChild(createAndStyleButtons(i,j).btn);
     }
+    play_area.appendChild(temp_row);
+
   }
 
   function markCell(row, cell, player) {
@@ -39,13 +49,22 @@ function GameBoard() {
         row_val += " | "
       }
       console.log(row_val);
-      // if (i < rows - 1) { console.log("----------"); }
       row_val = " ";
     }
   }
   return {
     getBoard, displayBoard, markCell
   }
+}
+
+function createAndStyleButtons(i,j){
+  let btn = document.createElement("button");
+  btn.setAttribute('id',`btn-${i}${j}`);
+  btn.addEventListener("click", (ev) => console.log(ev.target.id));
+  btn.style.minHeight = "2rem";
+  btn.style.padding = "1rem";
+  btn.style.margin = "0.5rem";
+  return {btn}
 }
 
 function Cell(){
